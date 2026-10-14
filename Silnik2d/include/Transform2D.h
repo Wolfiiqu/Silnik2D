@@ -1,0 +1,11 @@
+
+#ifndef SILNIK2D_TRANSFORM2D_H
+#define SILNIK2D_TRANSFORM2D_H
+
+
+class Transform2D
+{
+};
+
+
+#endif //SILNIK2D_TRANSFORM2D_H

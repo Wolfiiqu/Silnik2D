@@ -1,0 +1,12 @@
+
+
+#ifndef SILNIK2D_INPUTMANAGER_H
+#define SILNIK2D_INPUTMANAGER_H
+
+
+class InputManager
+{
+};
+
+
+#endif //SILNIK2D_INPUTMANAGER_H

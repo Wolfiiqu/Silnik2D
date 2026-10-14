@@ -1,0 +1,12 @@
+
+
+#ifndef SILNIK2D_ANIMATEDSPRITE_H
+#define SILNIK2D_ANIMATEDSPRITE_H
+
+
+class AnimatedSprite
+{
+};
+
+
+#endif //SILNIK2D_ANIMATEDSPRITE_H
