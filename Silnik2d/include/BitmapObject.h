@@ -14,7 +14,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "DrawableObject.h"
-#include "TransformObject.h"
+#include "TransformableObject.h"
 #include "Bitmap.h"
 
 namespace engine2d {

@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "UpdateObject.h"
+#include "UpdatableObject.h"
 
 namespace engine2d {
 

@@ -10,8 +10,8 @@
  * @date 2026
  */
 
-#include "Sprite.h"
-#include "UpdateObject.h"
+#include "SpriteObject.h"
+#include "UpdatableObject.h"
 #include "InputManager.h"
 
 namespace engine2d {

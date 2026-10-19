@@ -1,7 +1,3 @@
-#ifndef SILNIK2D_ANIMATEDOBJECT_H
-#define SILNIK2D_ANIMATEDOBJECT_H
-
-
 #pragma once
 /**
  * @file AnimatedObject.hpp
@@ -26,6 +22,4 @@ namespace engine2d {
         virtual void animate(float dt) = 0;
     };
 
-} // namespace engine2d
-
-#endif //SILNIK2D_ANIMATEDOBJECT_H
+}

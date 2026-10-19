@@ -9,7 +9,7 @@
  * @brief Trójkąt (lab03).
  * @author Osoba B
  */
-#include "Shape.h"
+#include "ShapeObject.h"
 
 namespace engine2d {
 

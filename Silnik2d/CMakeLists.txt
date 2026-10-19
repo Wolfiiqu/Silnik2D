@@ -18,21 +18,17 @@
 
     add_executable(Silnik2d ${SOURCES} ${HEADERS}
             src/main.cpp
-            include/main.h
-            src/TransformObject.cpp
-            include/TransformObject.h
-            src/GameObject.cpp
+            src/TransformableObject.cpp
+            include/TransformableObject.h
             include/GameObject.h
-            src/DrawableObject.cpp
             include/DrawableObject.h
-            include/UpdateObject.h
+            include/UpdatableObject.h
             src/Elipsa.cpp
             include/Elipsa.h
             src/Engine.cpp
             include/Engine.h
             src/BitmapHandler.cpp
             include/BitmapHandler.h
-            include/AnimatedObject.cpp
             include/AnimatedObject.h
             include/BitmapObject.h
             include/BItMapObject.cpp

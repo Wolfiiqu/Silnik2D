@@ -9,7 +9,7 @@
  * @brief Wielokąt (lab03).
  * @author Osoba B
  */
-#include "Shape.h"
+#include "ShapeObject.h"
 #include <vector>
 
 namespace engine2d {
