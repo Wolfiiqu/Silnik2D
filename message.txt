@@ -1,0 +1,342 @@
+# Plan projektu silnika 2D w C++ — 3 osoby
+
+## 📋 Wnioski z regulaminu (kluczowe dla planu)
+
+- **Język: C++** (nie Java!)
+- **Na 2. zajęciach:** wybrane biblioteki + zespół + projekt z **podpiętymi bibliotekami** (inaczej -10 pkt)
+- **Biblioteka** ma dawać tylko: **okno + input (klawiatura/mysz) + renderowanie bitmap**. Reszta (prymitywy, przekształcenia, wypełnianie) — **własnoręcznie**
+- **Kamień milowy** przed obroną — **pogrubione na czerwono = minimum** (musicie zrobić)
+- **Obrona 2D: 30 pkt** — każdy pokazuje swoją część
+- **Sprawozdanie PDF (12 pkt)** — instrukcja obsługi + zrzuty ekranu + podział pracy
+- **Dokumentacja Doxygen (8 pkt)**
+- **Nazewnictwo plików** (inaczej -5 pkt)
+- **Terminy na Moodle** (opóźnienie do -10 pkt)
+- **Wysyła jedna osoba**
+
+### 🎯 Rekomendowana biblioteka: **SFML 2.6** lub **SDL2**
+**Dlaczego SFML:**
+- Prosta obsługa klawiatury/myszy (`sf::Keyboard`, `sf::Mouse`)
+- `sf::RenderWindow`, `sf::Texture`, `sf::Sprite` (do bitmap i animacji — to jest OK, bo biblioteka ma renderować bitmapy)
+- **NIE używamy** `sf::RectangleShape` / `sf::CircleShape` do prymitywów — piszecie własne!
+
+**Uwaga:** w SFML macie `sf::Sprite` do bitmap — ale **wasz silnik też ma mieć klasę Sprite**. Możecie opakować `sf::Sprite` w swoją klasę + własne transformacje (macierz 3x3).
+
+---
+
+## 👥 Podział pracy (3 osoby)
+
+### 👤 Osoba A — **Matematyka + Przekształcenia**
+**Pliki:** `Point2D.hpp/cpp`, `Transform2D.hpp/cpp`, `MathUtils.hpp/cpp`
+
+```cpp
+// Point2D.hpp
+class Point2D {
+public:
+    float x, y;
+    Point2D(float x = 0, float y = 0);
+    Point2D operator+(const Point2D& o) const;
+    Point2D operator-(const Point2D& o) const;
+    Point2D operator*(float s) const;
+    bool operator==(const Point2D& o) const;
+    float distance(const Point2D& o) const;
+    Point2D rotateAround(const Point2D& pivot, float deg) const;
+};
+
+// Transform2D.hpp — macierz 3x3
+class Transform2D {
+    float m[3][3];
+public:
+    Transform2D(); // identity
+    static Transform2D translation(float tx, float ty);
+    static Transform2D rotation(float deg);
+    static Transform2D scaling(float sx, float sy);
+    Transform2D operator*(const Transform2D& o) const;
+    Point2D apply(const Point2D& p) const;
+    void translate(float tx, float ty);
+    void rotate(float deg);
+    void scale(float sx, float sy);
+};
+
+// MathUtils.hpp
+float degToRad(float deg);
+float lerp(float a, float b, float t);
+float clamp(float v, float lo, float hi);
+```
+
+**Kamień milowy (minimum):** `Point2D` + `Transform2D` złożenie macierzy działa.
+
+---
+
+### 👤 Osoba B — **Rendering + Prymitywy + Hierarchia klas**
+**Pliki:** `Color.hpp`, `Renderer.hpp/cpp`, `Shape.hpp/cpp`, `Rectangle.hpp`, `Circle.hpp`, `Line.hpp`, `Triangle.hpp`, `Polygon.hpp`
+
+```cpp
+// Color.hpp
+struct Color {
+    uint8_t r, g, b, a;
+    static Color Red();
+    static Color FromHex(uint32_t hex);
+};
+
+// Shape.hpp — abstrakcyjna baza
+class Shape {
+protected:
+    Point2D position;
+    Color color;
+    Transform2D transform;
+public:
+    virtual ~Shape() = default;
+    virtual void draw(Renderer& r) = 0;
+    void setColor(Color c);
+    void setPosition(Point2D p);
+    Transform2D& getTransform();
+};
+
+// Rectangle.hpp
+class Rectangle : public Shape {
+    float w, h;
+public:
+    Rectangle(float w, float h);
+    void draw(Renderer& r) override;
+};
+// Circle, Line, Triangle, Polygon analogicznie
+
+// Renderer.hpp — WASZ renderer, nie SFML
+class Renderer {
+    sf::RenderWindow& window;
+    sf::Image buffer; // własny bufor do fill
+public:
+    void drawLine(Point2D a, Point2D b, Color c);
+    void drawRect(Point2D tl, Point2D br, Color c, bool fill);
+    void drawCircle(Point2D center, float r, Color c, bool fill);
+    void fillPolygon(const std::vector<Point2D>& pts, Color c); // scanline
+    void drawPixel(int x, int y, Color c);
+    void clear(Color c);
+    void display();
+};
+```
+
+**Kamień milowy (minimum):** rysowanie prostokąta + koła + wypełnianie kolorem (scanline fill).
+
+---
+
+### 👤 Osoba C — **Input + Bitmapy + Animacja**
+**Pliki:** `InputManager.hpp/cpp`, `Bitmap.hpp/cpp`, `Sprite.hpp/cpp`, `Animation.hpp/cpp`, `AnimatedSprite.hpp/cpp`
+
+```cpp
+// InputManager.hpp
+class InputManager {
+    std::map<sf::Keyboard::Key, bool> keysPressed;
+    std::map<sf::Keyboard::Key, bool> keysJustPressed;
+    sf::Vector2i mousePos;
+    std::map<sf::Mouse::Button, bool> mousePressed;
+public:
+    void update(const sf::Event& e);
+    void endFrame(); // czyści "justPressed"
+    bool isKeyDown(sf::Keyboard::Key k) const;
+    bool isKeyJustPressed(sf::Keyboard::Key k) const;
+    Point2D getMousePosition() const;
+    bool isMouseDown(sf::Mouse::Button b) const;
+};
+
+// Bitmap.hpp
+class Bitmap {
+    sf::Texture texture;
+    sf::Image image;
+public:
+    bool loadFromFile(const std::string& path);
+    int getWidth() const;
+    int getHeight() const;
+    Color getPixel(int x, int y) const;
+    void setPixel(int x, int y, Color c);
+    void scale(float sx, float sy);
+    void rotate(float deg);
+    const sf::Texture& getTexture() const;
+};
+
+// Sprite.hpp
+class Sprite {
+protected:
+    Bitmap bitmap;
+    Transform2D transform;
+    Point2D origin;
+public:
+    void setBitmap(const Bitmap& b);
+    void draw(Renderer& r);
+};
+
+// Animation.hpp
+class Animation {
+    std::vector<Bitmap> frames;
+    float frameDuration; // sekundy
+    float currentTime;
+    int currentFrame;
+    bool loop;
+    bool pingPong;
+public:
+    void addFrame(const Bitmap& b);
+    void update(float dt);
+    Bitmap& getCurrentFrame();
+};
+
+// AnimatedSprite.hpp
+class AnimatedSprite : public Sprite {
+    Animation animation;
+public:
+    void update(float dt);
+    void draw(Renderer& r) override;
+};
+```
+
+**Kamień milowy (minimum):** input działa (klawisz + mysz), bitmapa się ładuje i wyświetla, animacja klatek działa.
+
+---
+
+## 🔗 Wspólny kontrakt (ustalcie w 1. dniu i zapiszcie w `INTERFACES.md`)
+
+| Element | Decyzja |
+|---------|---------|
+| Układ współrzędnych | X w prawo, **Y w dół** (jak SFML) |
+| Kolejność transformacji | `T * R * S` (skal → rot → transl) |
+| Jednostka rotacji | stopnie w API, radiany w środku |
+| Kolory | RGBA, 8 bit na kanał |
+| Czas | `dt` w sekundach (float) |
+| Nazewnictwo plików | `PascalCase.hpp` / `PascalCase.cpp` |
+| Namespace | `engine2d::` |
+
+---
+
+## 📅 Harmonogram (3 tygodnie)
+
+| Tydzień | A | B | C |
+|---------|---|---|---|
+| **1** | Point2D, MathUtils, Transform2D (podstawy) | Shape, Color, Renderer (line, pixel) | SFML setup, InputManager |
+| **2** | Transform2D (rot/skal), testy | Rectangle, Circle, scanline fill | Bitmap, Sprite |
+| **3** | Integracja + debug | Triangle, Polygon, outline | Animation, AnimatedSprite |
+
+---
+
+## 🎬 Demo technologiczne (na obronę)
+
+Scena łącząca wszystko:
+1. **Tło** z bitmapy (`Bitmap::loadFromFile`)
+2. **Animowany sprite** sterowany WSAD (Osoba C)
+3. **Obracające się figury** (Rectangle, Circle) wokół własnej osi (Osoba A + B)
+4. **Kliknięcie myszy** = nowa figura w tym punkcie z losowym kolorem (Osoba C + B)
+5. **Klawisz F** = toggle wypełnienia figur (Osoba B)
+
+Każda osoba na obronie pokazuje **swój moduł** + **jak go użyć** (to samo w sprawozdaniu).
+
+---
+
+## 📄 Sprawozdanie PDF (12 pkt) — struktura
+
+```
+1. Opis projektu
+2. Wybrana biblioteka (SFML) — uzasadnienie
+3. Instrukcja obsługi silnika (najważniejsze!)
+   - Jak stworzyć okno: ...
+   - Jak zmienić pozycję figury: shape.setPosition(...)
+   - Jak wypełnić figurę: shape.setColor(...) + shape.setFilled(true)
+   - Jak załadować bitmapę: bitmap.loadFromFile("...")
+   - Jak animować: animation.addFrame(...); animatedSprite.update(dt)
+   - Jak obsłużyć input: inputManager.isKeyDown(sf::Keyboard::W)
+4. Zrzuty ekranu z każdej funkcjonalności
+5. Podział pracy (kto co zrobił + ile %)
+6. Napotkane problemy
+```
+
+---
+
+## 📚 Dokumentacja Doxygen (8 pkt)
+
+W każdym pliku `.hpp`:
+```cpp
+/**
+ * @brief Klasa reprezentująca punkt 2D.
+ * @author Imię Nazwisko (Osoba A)
+ */
+class Point2D {
+public:
+    /**
+     * @brief Obraca punkt wokół innego punktu.
+     * @param pivot Punkt, wokół którego obracamy.
+     * @param deg Kąt w stopniach (CCW).
+     * @return Nowy obrócony punkt.
+     */
+    Point2D rotateAround(const Point2D& pivot, float deg) const;
+};
+```
+
+**Doxyfile:** `doxygen -g`, ustaw `INPUT`, `RECURSIVE = YES`, `EXTRACT_ALL = YES`, `GENERATE_LATEX = NO`.
+
+---
+
+## 🚨 Checklista przed kamieniem milowym
+
+- [ ] Projekt kompiluje się (CMake + SFML podpięte)
+- [ ] `Point2D` + `Transform2D` działają (A)
+- [ ] Rysowanie prostokąta + koła + fill (B)
+- [ ] Klawiatura + mysz reagują (C)
+- [ ] Bitmapa się ładuje i wyświetla (C)
+- [ ] **Nazewnictwo plików spójne** (`PascalCase`, bez spacji)
+- [ ] Wszystko wrzucone na Moodle **przed terminem**
+
+---
+
+## 💡 Dobre praktyki, żeby nie stracić punktów
+
+1. **CMakeLists.txt** od 1. dnia — żeby "podpięte biblioteki" były widoczne na 2. zajęciach
+2. **`.gitignore`** — nie commitujcie `build/`, `.vs/`, `*.exe`
+3. **README.md** z instrukcją budowania
+4. **Podział pracy w Git** — commity z opisem, żeby na obronie było widać kto co robił (na wypadek oskarżeń o nierówny wkład)
+5. **Nie kopiujcie z internetu** — nawet fragmentów (plagiat = 0 pkt dla całej grupy!)
+6. **Doxygen od początku** — nie po fakcie, bo się nie chce
+7. **Testujcie na tych samych wersjach SFML** — ustalcie np. 2.6.1
+
+---
+
+## 📁 Struktura projektu
+
+```
+engine2d/
+├── CMakeLists.txt
+├── README.md
+├── INTERFACES.md
+├── Doxyfile
+├── include/
+│   └── engine2d/
+│       ├── Point2D.hpp
+│       ├── Transform2D.hpp
+│       ├── MathUtils.hpp
+│       ├── Color.hpp
+│       ├── Renderer.hpp
+│       ├── Shape.hpp
+│       ├── Rectangle.hpp
+│       ├── Circle.hpp
+│       ├── Line.hpp
+│       ├── Triangle.hpp
+│       ├── Polygon.hpp
+│       ├── Bitmap.hpp
+│       ├── Sprite.hpp
+│       ├── Animation.hpp
+│       ├── AnimatedSprite.hpp
+│       └── InputManager.hpp
+├── src/
+│   └── (odpowiednie .cpp)
+├── assets/
+│   ├── textures/
+│   └── fonts/
+├── examples/
+│   └── demo.cpp
+└── docs/
+    └── sprawozdanie.pdf
+```
+
+---
+
+Chcesz, żebym:
+- **rozpisał konkretny moduł** (np. cały `Renderer` z scanline fill)?
+- **napisał `CMakeLists.txt`** dla SFML?
+- **przygotował szkielet demo** łączący wszystko?
+- **rozpisał przykład InputManagera** z eventami SFML?
