@@ -332,11 +332,12 @@ engine2d/
 └── docs/
     └── sprawozdanie.pdf
 ```
+=================================
 
----
+Wersja gry 1.0
 
-Chcesz, żebym:
-- **rozpisał konkretny moduł** (np. cały `Renderer` z scanline fill)?
-- **napisał `CMakeLists.txt`** dla SFML?
-- **przygotował szkielet demo** łączący wszystko?
-- **rozpisał przykład InputManagera** z eventami SFML?
+plansza, kształt chodzący , punktacja , pociski , tempo wzrastające , 
+
+
+
+
