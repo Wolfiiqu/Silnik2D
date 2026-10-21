@@ -335,7 +335,10 @@ engine2d/
 
 Wersja gry 1.0
 
-plansza, kształt chodzący , punktacja , pociski , tempo wzrastające , 
+plansza, kształt chodzący , punktacja , pociski , tempo wzrastające , można dołączyć możliwość urzycia myszki żeby np postawić chwilową ścianę która będzie możliwa do postawienia co ileś sekund żeby bardziej utrudnić sobie lub pomóc oraz życia .
+
+
+Demo technologiczne - wszystkie drawy i rendery oraz urzywalne funkcje które można przedstawić typu kliknięcie i coś się dzieje chodzenie i shape jakakolwiek rzecz którą można pokazać ale nie wykorzystaliśmy w grze
 
 
 
