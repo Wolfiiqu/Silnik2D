@@ -2,7 +2,6 @@
 
 ## 📋 Wnioski z regulaminu (kluczowe dla planu)
 
-- **Język: C++** (nie Java!)
 - **Na 2. zajęciach:** wybrane biblioteki + zespół + projekt z **podpiętymi bibliotekami** (inaczej -10 pkt)
 - **Biblioteka** ma dawać tylko: **okno + input (klawiatura/mysz) + renderowanie bitmap**. Reszta (prymitywy, przekształcenia, wypełnianie) — **własnoręcznie**
 - **Kamień milowy** przed obroną — **pogrubione na czerwono = minimum** (musicie zrobić)
