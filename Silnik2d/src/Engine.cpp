@@ -15,26 +15,29 @@ namespace engine2d {
         while (window.isOpen()) {
             sf::Event event;
             while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
+                if (event.type == sf::Event::Closed) window.close();
                 input.handleEvent(event);
             }
 
             float dt = clock.restart().asSeconds();
 
-            // update
+            if (updateCallback) updateCallback(dt);
+
             for (auto& obj : objects) {
                 if (auto u = dynamic_cast<UpdatableObject*>(obj.get()))
                     u->update(dt);
             }
 
-            // draw
             renderer.clear();
             for (auto& obj : objects) {
                 if (auto d = dynamic_cast<DrawableObject*>(obj.get()))
                     d->draw(renderer);
             }
-            renderer.display();
+            renderer.display();   // window.draw(screenSprite)
+
+            // === HUD z sf::Text (rysuje na window) ===
+            if (postRenderCallback) postRenderCallback(window);
+
             window.display();
             input.endFrame();
         }
@@ -44,4 +47,4 @@ namespace engine2d {
         objects.push_back(std::move(obj));
     }
 
-} // namespace engine2d
+}

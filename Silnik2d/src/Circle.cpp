@@ -5,6 +5,7 @@
 namespace engine2d {
 
     void Circle::draw(Renderer& r) {
+        if (!visible) {return;}
         Point2D center = transform.apply({0, 0});
         if (filled) {
             for (int y = -radius; y <= radius; ++y) {

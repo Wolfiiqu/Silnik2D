@@ -26,6 +26,7 @@ namespace engine2d {
     protected:
         Color color;         ///< Kolor figury.
         bool filled = false; ///< Czy figura jest wypełniona.
+        bool visible = true;
 
     public:
         virtual ~ShapeObject() = default;
@@ -38,6 +39,7 @@ namespace engine2d {
         void setFilled(bool f) { filled = f; }
         /// @brief Czy figura jest wypełniona.
         bool isFilled() const { return filled; }
+        void setVisible(bool v) { visible = v; }
     };
 
 } // namespace engine2d

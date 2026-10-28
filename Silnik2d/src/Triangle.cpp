@@ -4,6 +4,7 @@
 namespace engine2d {
 
     void Triangle::draw(Renderer& r) {
+        if (!visible) {return;}
         Point2D pa = transform.apply(a);
         Point2D pb = transform.apply(b);
         Point2D pc = transform.apply(c);

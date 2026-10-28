@@ -5,6 +5,7 @@
 namespace engine2d {
 
     void Rectangle::draw(Renderer& r) {
+        if (!visible) {return;}
         Point2D p1 = transform.apply({0, 0});
         Point2D p2 = transform.apply({w, 0});
         Point2D p3 = transform.apply({w, h});

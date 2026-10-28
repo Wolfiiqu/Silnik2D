@@ -17,7 +17,6 @@
     file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "include/*.h")
 
     add_executable(Silnik2d ${SOURCES} ${HEADERS}
-            src/main.cpp
             include/TransformableObject.h
             include/GameObject.h
             include/DrawableObject.h
@@ -31,13 +30,40 @@
             include/AnimatedObject.h
             include/BitmapObject.h
             src/BItMapObject.cpp
-            src/Player.cpp
-            include/Player.h
-            include/AnimatedObject.h)
+            include/AnimatedObject.h
+            demo/src/Player.cpp
+            demo/include/Player.h
+            demo/src/Bullet.cpp
+            demo/include/Bullet.h
+            demo/src/HomingBullet.cpp
+            demo/include/HomingBullet.h
+            demo/src/TrackerBullet.cpp
+            demo/include/TrackerBullet.h
+            demo/src/Bomb.cpp
+            demo/include/Bomb.h
+            demo/src/Spawner.cpp
+            demo/include/Spawner.h
+            demo/src/Game.cpp
+            demo/include/Game.h
+            demo/include/GameConfig.h
+            demo/include/Board.h
+            demo/src/Board.cpp
+            demo/main.cpp
+            demo/src/BoardObject.cpp
+            demo/include/BoardObject.h
+            demo/src/HudObject.cpp
+            demo/include/HudObject.h
+    )
 
     target_include_directories(Silnik2d PRIVATE include)
 
     target_link_libraries(Silnik2d PRIVATE sfml-graphics sfml-main)
+
+    add_custom_command(TARGET Silnik2d POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/demo/assets
+            $<TARGET_FILE_DIR:Silnik2d>/assets
+    )
 
     if(WIN32)
         target_link_libraries(Silnik2d PRIVATE sfml-main)

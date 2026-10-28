@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <functional>
 #include "Renderer.h"
 #include "InputManager.h"
 #include "GameObject.h"
@@ -29,6 +30,8 @@ namespace engine2d {
         InputManager input;                               ///< Menedżer inputu.
         std::vector<std::unique_ptr<GameObject>> objects; ///< Obiekty gry.
         sf::Clock clock;                                  ///< Zegar do dt.
+        std::function<void(float)> updateCallback;
+        std::function<void(sf::RenderWindow&)> postRenderCallback;  // ← NEW
 
     public:
         /**
@@ -47,13 +50,16 @@ namespace engine2d {
          * @param obj Unikalny wskaźnik do obiektu.
          */
         void addObject(std::unique_ptr<GameObject> obj);
+        void setUpdateCallback(std::function<void(float)> cb) { updateCallback = cb; }
 
+        void setPostRenderCallback(std::function<void(sf::RenderWindow&)> cb) { postRenderCallback = cb; }
         /// @brief Zwraca renderer.
         Renderer& getRenderer() { return renderer; }
         /// @brief Zwraca input.
         InputManager& getInput() { return input; }
         /// @brief Zwraca okno.
         sf::RenderWindow& getWindow() { return window; }
+        void clearObjects(){objects.clear();};
     };
 
 } // namespace engine2d

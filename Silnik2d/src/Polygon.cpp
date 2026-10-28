@@ -4,6 +4,7 @@
 namespace engine2d {
 
     void Polygon::draw(Renderer& r) {
+        if (!visible) {return;}
         std::vector<Point2D> pts;
         pts.reserve(points.size());
         for (const auto& p : points)
