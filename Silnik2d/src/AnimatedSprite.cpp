@@ -1,3 +1,0 @@
-
-
-#include "../include/AnimatedSprite.h"
